@@ -1,25 +1,39 @@
-# Classic Handbook: look-ups and links are welcome. Automated, bulk or regular collection of our pages or data needs
-# written permission first: https://github.com/nairck/ClassicHandbook/issues
-User-agent: *
-Allow: /ClassicHandbook/
-Disallow: /ClassicHandbook/data/
-Disallow: /ClassicHandbook/database/
-Crawl-delay: 30
+# Classic Handbook (https://nairck.github.io/ClassicHandbook/)
+# Look-ups and links are welcome. Automated, bulk or repeated collection, reuse in other
+# projects, and AI training need written consent: https://github.com/nairck/ClassicHandbook/issues
 
-# AI-training and bulk crawlers: not without written permission
+# AI training and bulk collection: no.
 User-agent: GPTBot
 User-agent: ChatGPT-User
 User-agent: OAI-SearchBot
 User-agent: ClaudeBot
 User-agent: Claude-User
+User-agent: Claude-SearchBot
 User-agent: anthropic-ai
 User-agent: CCBot
 User-agent: Google-Extended
 User-agent: Applebot-Extended
 User-agent: PerplexityBot
+User-agent: Perplexity-User
 User-agent: Bytespider
 User-agent: Amazonbot
 User-agent: meta-externalagent
+User-agent: FacebookBot
 User-agent: Diffbot
 User-agent: cohere-ai
+User-agent: cohere-training-data-crawler
+User-agent: AI2Bot
+User-agent: Omgilibot
+User-agent: Timpibot
+User-agent: ImagesiftBot
 Disallow: /
+
+# Everyone else (search engines welcome on the pages; never the data).
+User-agent: *
+Allow: /ClassicHandbook/$
+Allow: /ClassicHandbook/index.html
+Disallow: /ClassicHandbook/data/
+Disallow: /ClassicHandbook/database/
+Disallow: /ClassicHandbook/ort/
+Disallow: /ClassicHandbook/version.json
+Crawl-delay: 30
