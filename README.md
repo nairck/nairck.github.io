@@ -1,0 +1,1 @@
+Holds only robots.txt for nairck.github.io (Classic Handbook's crawler rules, which must sit at the host's root). When the site moves to its own domain, the same rules ship with the site and this repo can be removed.
