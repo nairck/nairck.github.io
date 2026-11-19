@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<title>Classic Handbook</title>
+<!--
+  Classic Handbook moved from https://nairck.github.io/ClassicHandbook/ to https://classichandbook.com (18 Nov 2026).
+  A browser keeps a site's saved data under the address it was saved at. The new site, on a browser's first visit,
+  comes here for a moment: this page is on the old address, so it can read what the old page saved (its settings in
+  localStorage and the live tracker's history, IndexedDB "ch-tracker" store "files"), and goes straight back to
+  https://classichandbook.com/ with it in the address's #fragment, which never leaves the browser. Nothing is changed
+  here and nothing is sent anywhere else. Caches and pictures the new site makes again by itself are left out.
+-->
+<style>html,body{margin:0;height:100%;background:#181d23}@media (prefers-color-scheme: light){html,body{background:#e7eef5}}</style>
+</head>
+<body>
+<script>
+"use strict";
+(async () => {
+  const TO = "https://classichandbook.com/";
+  const SKIP = new Set(["ch-last-shot", "mp.items.thumb", "ch-home-figs", "ch-splash"]);   // (remade by the new site)
+  const b64url = (u) => {
+    let s = "";
+    for (let i = 0; i < u.length; i += 32768) s += String.fromCharCode.apply(null, u.subarray(i, i + 32768));
+    return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  };
+  const files = () => new Promise((ok) => {
+    let fresh = false;
+    const q = indexedDB.open("ch-tracker");
+    q.onupgradeneeded = () => { fresh = true; };              // (none here: opening made it, empty)
+    q.onsuccess = () => {
+      const d = q.result;
+      if (fresh || !d.objectStoreNames.contains("files")) { d.close(); if (fresh) indexedDB.deleteDatabase("ch-tracker"); ok({}); return; }
+      const tx = d.transaction("files"), os = tx.objectStore("files"), ks = os.getAllKeys(), vs = os.getAll();
+      tx.oncomplete = () => { const f = {}; ks.result.forEach((k, i) => { if (typeof vs.result[i] === "string") f[k] = vs.result[i]; }); d.close(); ok(f); };
+      tx.onerror = () => { d.close(); ok({}); };
+    };
+    q.onerror = () => ok({});
+    q.onblocked = () => ok({});
+  });
+  let out = "none";
+  try {
+    const local = {};
+    for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k !== null && !SKIP.has(k)) local[k] = localStorage.getItem(k); }
+    const f = await files();
+    if (Object.keys(local).length || Object.keys(f).length) {
+      const json = JSON.stringify({ v: 1, local, files: f });
+      if (typeof CompressionStream === "function") {
+        const z = new Blob([json]).stream().pipeThrough(new CompressionStream("gzip"));
+        out = "z" + b64url(new Uint8Array(await new Response(z).arrayBuffer()));
+      } else out = "j" + b64url(new TextEncoder().encode(json));
+    }
+  } catch (e) { out = "none"; }
+  location.replace(TO + "#ch-move=" + out);
+})();
+</script>
+</body>
+</html>
